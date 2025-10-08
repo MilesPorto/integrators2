@@ -1,4 +1,6 @@
 import sys
+import numpy as np
+from scipy.special import gamma
 
 def main():
     # Check if the user provided the correct number of arguments
@@ -17,10 +19,20 @@ def main():
         sys.exit(1)  # Exit with error code
 
     # ******* Add your code here
-
-    volume = 0.0
-    stdev = 0.0
-    relerror=0.0
+    points = (np.random.rand(N,d)-0.5)*2*r
+    distances = np.linalg.norm(points, axis=1)
+    #print(distances)
+    #print(d)
+    counter = 0
+    for g in distances:
+        if g<=r:
+            counter+=1
+    volume = counter/N*(2*r)**(d)
+    realVolume = (np.pi ** (d / 2) / gamma(d / 2 + 1)) * (r ** d)
+    e1 = np.sqrt((counter - (counter**2)/N)/(N-1))
+    stdev = e1*((2*r)**(d))/np.sqrt(N)
+    relerror=np.abs((realVolume-volume)/realVolume)
+    
 
     # *******
 
