@@ -32,6 +32,8 @@ def main():
     ks = range(6, 25)  # 6 to 24 inclusive
     Ns = [2**k for k in ks]
 
+    all_data = {}
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
     for d in dims:
@@ -45,6 +47,8 @@ def main():
             errors_std.append(stdev)
             sqrtN.append(np.sqrt(N))
             print(f"d={d}, N={N}, rel_error={rel_error}, stdev={stdev}")
+
+        all_data[d] = (np.array(sqrtN), np.array(errors), np.array(errors_std))
 
         # Log-log plot
         ax1.errorbar(sqrtN, errors, yerr=errors_std, fmt='o-', capsize=3, label=f"d={d}")
@@ -69,7 +73,20 @@ def main():
     plt.suptitle("Relative Error vs √N for Monte Carlo Hypersphere Volume", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.savefig("convergence.png", dpi=300)
-    plt.show()
+
+    #Plot of only 10D error
+
+    sqrtN_10, errors_10, _ = all_data[10]
+
+    plt.figure(figsize=(7,6))
+    plt.loglog(sqrtN_10, errors_10, 'o-', label="d = 10", color='tab:blue')
+    plt.xlabel(r"$\sqrt{N}$")
+    plt.ylabel("Relative Error")
+    plt.title("Monte Carlo Relative Error vs √N (10D only)")
+    plt.grid(True, which="both", ls="--")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("10Dconvergence.png", dpi=300)
 
 if __name__ == "__main__":
     main()
